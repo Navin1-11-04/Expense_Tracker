@@ -4,162 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Expense Tracker</title>
-    <style>
-        *{
-            margin:0;
-            padding:0;
-            box-sizing: border-box;
-            font-family:'Open sans',sans-serif;
-        }
-        .wrapper{
-            width:100%;
-            height:85vh;
-            display: flex;
-            align-items: center;
-            flex-direction: column;
-            justify-content:center;
-            padding:10vh 10%;
-        }
-        .container{
-           width:100%;
-           height:100%;
-           display:flex;
-           padding:2vh 2vh;
-        }
-        .left{
-            width:50%;
-            height:100%;
-            display: flex;
-            padding:2%;
-            align-items:start;
-            flex-direction: column;
-            justify-content: start;
-        }
-        .right{
-            width:50%;
-            height:100%;
-            display: flex;
-            padding:2%;
-            flex-direction: column;
-            position: relative;
-            align-items:start;
-            justify-content: start;
-        }
-        @media screen and (max-width:700px){
-            .container{
-                width:100%;
-                height:100%;
-                display:flex;
-                flex-direction: column;
-                padding:2vh 2vh;
-            }
-            .left{
-            width:100%;
-            }
-            .right{
-            width:100%;
-            }
-        }
-        form{
-            display: flex;
-            flex-direction: column;
-            width:100%;
-            font-weight:400;
-            height:100%;
-        }
-        input{
-            height:7vh;
-            width:80%;
-            outline:1.5px solid #9820C5;
-            border-radius: 5px;
-            margin:1.5vh 0 3vh 0;
-            color:#2c2c2c;
-            border:none;
-            padding:0.5vh 2vh;
-        }
-        input:active{
-            outline:1.5px solid #9820C5;
-            border:2px solid #710897;
-        }
-        button{
-            width:40%;
-            padding:2vh 3vh;
-            font-size:medium;
-            color:#fff;
-            border-radius: 5px;
-            background-color: #2f2f2f;
-            border:0;
-            outline:none;
-            margin:3vh 0;
-        }
-        button:hover{
-            background-color:#fff;
-            color:#fff;
-            background-color:#710897;
-        }
-        h3{
-            margin:2vh 0 4vh 0;
-            font-weight:600;
-        }
-        h4{
-            color:#2f2f2f;
-            font-size:large;
-            margin:0 0 1vh 0;
-            font-weight: 400;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        span{
-            background-color:#710897;
-            padding:1vh 5vh;
-            width:40%;
-            color:#fff;
-        }
-        #totalExpense{
-            background-color: #fff;
-            color:red;
-            border:1px solid #710897;
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-        .right-top{
-            position:sticky;
-            top:0;
-            z-index:10;
-            width:100%;
-            border:2px solid #710897;
-            padding:2vh 0;
-            text-align: center;
-             border-radius:10px 10px 0 0;
-        }
-        .right-bottom{
-            overflow-y: scroll;
-            width:100%;
-        }
-        .right-bottom::-webkit-scrollbar{
-            width:3px;
-        }
-        .right-bottom::-webkit-scrollbar-track{
-            background-color: transparent;
-        }.right-bottom::-webkit-scrollbar-thumb{
-            background-color: #710897;
-        }
-
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="wrapper">
@@ -171,92 +16,24 @@
                     <input type="text" id="description" name="description" placeholder="--Your Description--" required>
                     <label for="amount">Amount :</label>
                     <input type="number" id="amount" name="amount" min="0" placeholder="--Amount--" required>
-                    <button type="submit">Add Expense</button>
+                    <button type="submit" id="addExpense">Add Expense</button>
                 </form>
-                <div style="display: flex; width:90%;">
+                <div style="display:flex;width:100%;">
                     <span>Total Expense : $</span><span id="totalExpense">0.00</span>
                 </div>
             </div>
             <div class="right">
                 <div class="right-top">
-                    <h4>Expense</h4>
+                    <h4 style="color:#fff">Expense</h4>
                 </div>
                 <div class="right-bottom">
-                    <table id="expenseList" border="1">
-                        <tr>
-                            <th>Description</th>
-                            <th>Amount</th>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                        </tr>
+                    <table id="expenseList">
+                    
                     </table>
                 </div>
             </div>
         </div>
     </div>
-    <script>
-        
-    const form = document.getElementById('expenseForm');
-    const expenseList = document.getElementById('expenseList');
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const description = document.getElementById('description').value;
-      const amount = parseFloat(document.getElementById('amount').value);
-
-      const response = await fetch('/api/expenses', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ description, amount })
-      });
-
-      if (response.ok) {
-        const newExpense = await response.json();
-        expenses.push(newExpense);
-        renderExpenses();
-        form.reset();
-        totalExpense();
-      }
-    });
-
-    async function getExpenses() {
-      const response = await fetch('/api/expenses');
-      if (response.ok) {
-        expenses = await response.json();
-        renderExpenses();
-        totalExpense();
-      }
-    }
-
-    function renderExpenses() {
-        expenseList.innerHTML = '';
-  expenses.forEach(expense => {
-            const tr = document.createElement('tr');
-            const td1 = document.createElement('td');
-            const td2 = document.createElement('td');
-    
-            td1.textContent = expense.description;
-            td2.textContent = expense.amount.toFixed(2);
-
-            tr.appendChild(td1);
-            tr.appendChild(td2);
-    
-            expenseList.appendChild(tr);
-  });
-    }
-    function totalExpense(){
-        let total = 0;
-        expenses.forEach((item)=>{
-            total += item.amount;
-        })
-        document.getElementById('totalExpense').textContent = total.toFixed(2);
-    }
-
-    getExpenses();
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
